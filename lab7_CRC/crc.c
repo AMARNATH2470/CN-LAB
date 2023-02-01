@@ -1,67 +1,57 @@
 #include<stdio.h>
 #include<string.h>
-#define N strlen(g)
-
-char t[28],cs[28],g[10];
-int a,e,c;
-
-void xorfunction(){
-    for(c = 1;c < N; c++)
-    cs[c] = (( cs[c] == g[c])?'0':'1');
+#define N strlen(gen_poly)
+char data[28];
+char check_value[28];
+char gen_poly[10];
+int data_length,i,j;
+void XOR(){
+    for(j = 1;j < N; j++)
+    check_value[j] = (( check_value[j] == gen_poly[j])?'0':'1');
+    
 }
 
 void crc(){
-    for(e=0;e<N;e++)
-        cs[e]=t[e];
+    for(i=0;i<N;i++)
+        check_value[i]=data[i];
     do{
-        if(cs[0]=='1')
-            xorfunction();
-        for(c=0;c<N-1;c++)
-            cs[c]=cs[c+1];
-        cs[c]=t[e++];
-    }while(e<=a+N-1);
+        if(check_value[0]=='1')
+            XOR();
+        for(j=0;j<N-1;j++)
+            check_value[j]=check_value[j+1];
+        check_value[j]=data[i++];
+    }while(i<=data_length+N-1);
 }
 
-int main()
-{
-    printf("\nEnter data : ");
-    scanf("%s",t);
-    printf("\nEnter generating polynomial : ");
-    scanf("%s",g);
-    printf("\n----------------------------------------");
-    printf("\nGenerating polynomial : %s",g);
-    a=strlen(t);
-    for(e=a;e<a+N-1;e++)
-        t[e]='0';
-    printf("\n----------------------------------------");
-    printf("\nPaded data is : %s",t);
-    printf("\n----------------------------------------");
+void receiver(){
+    printf("\nEnter the received data: ");
+    scanf("%s", data);
+    printf("Data received: %s", data);
     crc();
-    printf("\nCRC is : %s",cs);
-    for(e=a;e<a+N-1;e++)
-        t[e]=cs[e-a];
-    printf("\n----------------------------------------");
-    printf("\nFinal data to be sent : %s",t);
-    printf("\n----------------------------------------");
-    printf("\nTest error detection 0(yes) 1(no)? : ");
-    scanf("%d",&e);
-    if(e==0)
-    {
-        do{
-            printf("\nEnter the position where error is to be inserted : ");
-            scanf("%d",&e);
-        }while(e==0 || e>a+N-1);
-        t[e-1]=(t[e-1]=='0')?'1':'0';
-        printf("\n----------------------------------------");
-        printf("\nErroneous data : %s\n",t);
-    }
-    crc();
-    for(e=0;(e<N-1) && (cs[e]!='1');e++);
-        if(e<N-1)
+    for(i=0;(i<N-1) && (check_value[i]!='1');i++);
+        if(i<N-1)
             printf("\nError detected\n\n");
         else
             printf("\nNo error detected\n\n");
-            printf("\n----------------------------------------\n");
-        return 0;
 }
 
+
+
+int main()
+{
+    printf("\nEnter data to be transmitted: ");
+    scanf("%s",data);
+    printf("\nEnter the Generating polynomial: ");
+    scanf("%s",gen_poly);
+    data_length=strlen(data);
+    for(i=data_length;i<data_length+N-1;i++)
+        data[i]='0';
+    printf("\nData padded with n-1 zeros : %s",data);
+    crc();
+    printf("\nCRC or Check value is : %s",check_value);
+    for(i=data_length;i<data_length+N-1;i++)
+        data[i]=check_value[i-data_length];
+    printf("\nFinal data to be sent : %s",data);
+    receiver();
+        return 0;
+}
